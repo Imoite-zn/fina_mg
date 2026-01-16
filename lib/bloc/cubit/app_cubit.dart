@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AppState{
+class AppState {
   late String? username;
+
   late int themeColor;
   late String? currency;
 
@@ -14,14 +15,15 @@ class AppState{
     String? currency = prefs.getString("currency");
 
     AppState appState = AppState();
-    appState.themeColor = themeColor ?? Colors.green.value;
+    appState.themeColor = themeColor ?? Colors.green.toARGB32();
     appState.username = username;
     appState.currency = currency;
 
     return appState;
   }
 }
-class AppCubit extends Cubit<AppState>{
+
+class AppCubit extends Cubit<AppState> {
   AppCubit(AppState initialState) : super(initialState);
 
   Future<void> updateUsername(username) async {
@@ -35,6 +37,7 @@ class AppCubit extends Cubit<AppState>{
     await prefs.setString("currency", currency);
     emit(await AppState.getState());
   }
+
   Future<void> updateThemeColor(int color) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt("themeColor", color);
@@ -48,5 +51,4 @@ class AppCubit extends Cubit<AppState>{
     await prefs.remove("username");
     emit(await AppState.getState());
   }
-
 }

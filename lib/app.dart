@@ -11,32 +11,32 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: MediaQuery.of(context).platformBrightness
-    ));
-    return  BlocBuilder<AppCubit, AppState>(
-        builder: (context, state){
-          return MaterialApp(
-            title: 'Fintracker',
-            theme: ThemeData(
-                useMaterial3: true,
-                brightness: MediaQuery.of(context).platformBrightness,
-                navigationBarTheme: NavigationBarThemeData(
-                  labelTextStyle: WidgetStateProperty.resolveWith((Set<WidgetState> states){
-                    TextStyle style =  const TextStyle(fontWeight: FontWeight.w500, fontSize: 11);
-                    if(states.contains(WidgetState.selected)){
-                      style = style.merge(const TextStyle(fontWeight: FontWeight.w600));
-                    }
-                    return style;
-                  }),
-                )
-            ),
-            home: const MainScreen(),
-            localizationsDelegates: const [
-              GlobalWidgetsLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-            ],
-          );
-        }
-    );
+        statusBarIconBrightness: MediaQuery.of(context).platformBrightness));
+    return BlocBuilder<AppCubit, AppState>(builder: (context, state) {
+      return MaterialApp(
+        title: 'Fintracker Zverz',
+        theme: ThemeData(
+            useMaterial3: true,
+            brightness: MediaQuery.of(context).platformBrightness,
+            navigationBarTheme: NavigationBarThemeData(
+              labelTextStyle:
+                  WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                TextStyle style =
+                    const TextStyle(fontWeight: FontWeight.w500, fontSize: 11);
+                if (states.contains(WidgetState.selected)) {
+                  style =
+                      style.merge(const TextStyle(fontWeight: FontWeight.w600));
+                }
+                return style;
+              }),
+            )),
+        home: const MainScreen(),
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: const [
+          GlobalWidgetsLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+        ],
+      );
+    });
   }
 }
