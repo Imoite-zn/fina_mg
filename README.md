@@ -6,7 +6,6 @@ FinTracker is a Flutter application that helps you track your expenses and manag
 
 ![FinTracker Screenshot](screenshots/fintracker_screenshot.jpg)
 
-
 ## Download
 
 You can download FinTracker from the Google Play Store:
@@ -48,6 +47,35 @@ flutter pub get
 flutter run
 ```
 
+## Web Deployment
+
+To build the app for web deployment, use:
+
+```bash
+flutter build web --release --no-tree-shake-icons
+```
+
+Or use the provided build scripts:
+
+- **Linux/Mac**: `./build-web.sh`
+- **Windows**: `build-web.bat`
+
+> **Note**: The `--no-tree-shake-icons` flag is required because this app uses dynamic IconData loaded from the database.
+
+### Deployment Platform Configuration
+
+If you're using a deployment platform (Vercel, Netlify, Render, etc.), configure the build command as:
+
+```
+flutter build web --release --no-tree-shake-icons
+```
+
+And set the publish directory to:
+
+```
+build/web
+```
+
 ## Usage
 
 - Upon launching the app, you will be presented with the home screen.
@@ -58,6 +86,7 @@ flutter run
 - Set monthly budgets for each category by clicking on the category and entering the desired amount.
 
 ## Roadmap
+
 Check out our detailed [roadmap](https://github.com/nafishahmeddev/fintracker/blob/master/roadmap.md) for planned features and updates!
 
 ## Contributing
