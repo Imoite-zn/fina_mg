@@ -55,6 +55,7 @@ dependencies:
   flutter_sms_inbox: ^1.0.4
   enough_mail: ^2.1.7
   flutter_secure_storage: ^10.0.0
+  sqflite_common_ffi_web: ^0.4.2+2
 
 dev_dependencies:
   flutter_test:
