@@ -1,4 +1,22 @@
-// Stub File class for web platform compatibility
+// Stub implementations for web platform
+// These are never actually called on web, but needed for compilation
+
+class Permission {
+  static Permission get storage => Permission();
+
+  Future<PermissionStatus> get status async => PermissionStatus();
+  Future<PermissionStatus> request() async => PermissionStatus();
+}
+
+class PermissionStatus {
+  bool get isGranted => false;
+}
+
+Future<Directory> getApplicationDocumentsDirectory() async {
+  throw UnsupportedError('Not supported on web');
+}
+
+// File and Directory stubs
 class File {
   File(String path);
 

@@ -7,8 +7,11 @@ import "package:fintracker/helpers/migrations/migrations.dart";
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
 import "package:sqflite_common_ffi_web/sqflite_ffi_web.dart";
 
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+// Conditional imports for non-web platforms only
+import 'package:path_provider/path_provider.dart'
+    if (dart.library.html) 'io_stub.dart';
+import 'package:permission_handler/permission_handler.dart'
+    if (dart.library.html) 'io_stub.dart';
 
 Database? database;
 Future<Database> getDBInstance() async {
