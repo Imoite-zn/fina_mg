@@ -1,9 +1,9 @@
 import "dart:convert";
 import "dart:io" if (dart.library.html) "io_stub.dart";
-import "package:flutter/foundation.dart" show kIsWeb;
 import "package:flutter/material.dart";
 import "package:path/path.dart";
 import "package:fintracker/helpers/migrations/migrations.dart";
+import "package:fintracker/helpers/platform_helper.dart";
 import "package:sqflite_common_ffi/sqflite_ffi.dart";
 import "package:sqflite_common_ffi_web/sqflite_ffi_web.dart";
 
@@ -18,21 +18,21 @@ Future<Database> getDBInstance() async {
   if (database == null) {
     Database db;
 
-    if (kIsWeb) {
-      // Web platform - use sqflite_ffi_web
+    if (PlatformHelper.isWeb) {
+      // Web platform - use sqflite_ffi_web (IndexedDB)
       databaseFactory = databaseFactoryFfiWeb;
       db = await databaseFactory.openDatabase("database.db",
           options: OpenDatabaseOptions(
               version: 1, onCreate: onCreate, onUpgrade: onUpgrade));
-    } else if (Platform.isWindows) {
-      // Windows platform
+    } else if (PlatformHelper.isWindows) {
+      // Windows platform - use FFI
       sqfliteFfiInit();
       var databaseFactory = databaseFactoryFfi;
       db = await databaseFactory.openDatabase("database.db",
           options: OpenDatabaseOptions(
               version: 1, onCreate: onCreate, onUpgrade: onUpgrade));
     } else {
-      // Mobile platforms (Android/iOS)
+      // Mobile platforms (Android/iOS) - use native SQLite
       String databasesPath = await getDatabasesPath();
       String dbPath = join(databasesPath, 'database.db');
       db = await openDatabase(dbPath,
@@ -107,12 +107,11 @@ Future<void> resetDatabase() async {
 }
 
 Future<String> getExternalDocumentPath() async {
-  if (kIsWeb) {
-    // Web doesn't have a file system, return empty string
+  if (PlatformHelper.isWeb) {
     throw UnsupportedError('File export is not supported on web platform');
   }
 
-  if (!kIsWeb) {
+  if (PlatformHelper.supportsFileOperations) {
     // To check whether permission is given for this app or not.
     var status = await Permission.storage.status;
     if (!status.isGranted) {
@@ -120,7 +119,7 @@ Future<String> getExternalDocumentPath() async {
       await Permission.storage.request();
     }
     Directory directory = Directory("");
-    if (Platform.isAndroid) {
+    if (PlatformHelper.isAndroid) {
       // Redirects it to download folder in android
       directory = Directory("/storage/emulated/0/Download");
     } else {
@@ -136,7 +135,7 @@ Future<String> getExternalDocumentPath() async {
 }
 
 Future<dynamic> export() async {
-  if (kIsWeb) {
+  if (PlatformHelper.isWeb) {
     // For web, return the data as JSON string instead of writing to file
     List<dynamic> accounts = await database!.query(
       "accounts",
@@ -168,7 +167,7 @@ Future<dynamic> export() async {
   data["categories"] = categories;
   data["payments"] = payments;
 
-  if (!kIsWeb) {
+  if (PlatformHelper.supportsFileOperations) {
     final path = await getExternalDocumentPath();
     String name =
         "fintracker-backup-${DateTime.now().millisecondsSinceEpoch}.json";
@@ -181,12 +180,12 @@ Future<dynamic> export() async {
 }
 
 Future<void> import(String path) async {
-  if (kIsWeb) {
+  if (PlatformHelper.isWeb) {
     throw UnsupportedError('File import is not supported on web platform');
   }
 
   // Only compile File code for non-web platforms
-  if (!kIsWeb) {
+  if (PlatformHelper.supportsFileOperations) {
     File file = File(path);
     Map<int, int> accountsMap = {};
     Map<int, int> categoriesMap = {};
